@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="fa">
+<head>
+  <meta charset="UTF-8">
+  <title>نظرسنجي</title>
+</head>
+<body dir="rtl">
+  <h1>فرم نظرسنجي</h1>
+  <form method="POST">
+    {% for q in questions %}
+      <fieldset>
+        <legend>{{ q.question }}</legend>
+        {% for option in q.options %}
+          <label>
+            <input type="radio" name="question_{{ q.id }}" value="{{ option }}" required>
+            {{ option }}
+          </label><br>
+        {% endfor %}
+      </fieldset>
+      <hr>
+    {% endfor %}
+    <button type="submit">ارسال</button>
+  </form>
+</body>
+</html>
