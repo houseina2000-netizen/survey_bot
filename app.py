@@ -1,24 +1,15 @@
 from flask import Flask, render_template, request
 import json
 import os
-import psycopg2
 
 app = Flask(__name__)
 
 QUESTIONS_FILE = 'questions.json'
+RESPONSES_FILE = 'responses.json'
 
-# Load questions
+# Load questions once
 with open(QUESTIONS_FILE, 'r', encoding='utf-8') as f:
     questions = json.load(f)
-
-# اتصال به دیتابیس PostgreSQL
-conn = psycopg2.connect(
-    host=os.getenv("DB_HOST"),
-    port=os.getenv("DB_PORT"),
-    dbname=os.getenv("DB_NAME"),
-    user=os.getenv("DB_USER"),
-    password=os.getenv("DB_PASSWORD")
-)
 
 
 @app.route('/', methods=['GET', 'POST'])
@@ -26,25 +17,31 @@ def survey():
     if request.method == 'POST':
         answers = request.form.to_dict()
 
-        with conn.cursor() as cur:
-            cur.execute(
-                "INSERT INTO answers (response) VALUES (%s);",
-                (json.dumps(answers, ensure_ascii=False),)
-            )
-            conn.commit()
+        # بارگذاري پاسخ‌هاي قبلي
+        if os.path.exists(RESPONSES_FILE):
+            with open(RESPONSES_FILE, 'r', encoding='utf-8') as f:
+                responses = json.load(f)
+        else:
+            responses = []
 
-        return "پاسخ شما با موفقیت ثبت شد!"
+        responses.append(answers)
+
+        # ذخيره پاسخ جديد
+        with open(RESPONSES_FILE, 'w', encoding='utf-8') as f:
+            json.dump(responses, f, ensure_ascii=False, indent=2)
+
+        return "پاسخ شما با موفقيت ثبت شد!"
 
     return render_template('survey.html', questions=questions)
 
 
 @app.route('/results')
 def show_results():
-    with conn.cursor() as cur:
-        cur.execute("SELECT response FROM answers ORDER BY submitted_at DESC;")
-        rows = cur.fetchall()
-
-    responses = [json.loads(row[0]) for row in rows]
+    if os.path.exists(RESPONSES_FILE):
+        with open(RESPONSES_FILE, 'r', encoding='utf-8') as f:
+            responses = json.load(f)
+    else:
+        responses = []
 
     return {"responses": responses}
 
