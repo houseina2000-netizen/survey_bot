@@ -1,6 +1,8 @@
-from flask import Flask, render_template, request
+from flask import Flask, render_template, request, Response
 import json
 import os
+import csv
+from io import StringIO
 
 app = Flask(__name__)
 
@@ -10,7 +12,6 @@ RESPONSES_FILE = 'responses.json'
 # Load questions once
 with open(QUESTIONS_FILE, 'r', encoding='utf-8') as f:
     questions = json.load(f)
-
 
 @app.route('/', methods=['GET', 'POST'])
 def survey():
@@ -34,7 +35,6 @@ def survey():
 
     return render_template('survey.html', questions=questions)
 
-
 @app.route('/results')
 def show_results():
     if os.path.exists(RESPONSES_FILE):
@@ -44,13 +44,6 @@ def show_results():
         responses = []
 
     return render_template('results.html', responses=responses)
-
-
-if __name__ == '__main__':
-    app.run(debug=True)
-import csv
-from flask import send_file, Response
-from io import StringIO
 
 @app.route('/download')
 def download_csv():
@@ -63,16 +56,18 @@ def download_csv():
     if not responses:
         return "فایلی برای دانلود وجود ندارد."
 
-    # تبدیل JSON به CSV
     si = StringIO()
     writer = csv.DictWriter(si, fieldnames=responses[0].keys())
     writer.writeheader()
     writer.writerows(responses)
 
-    output = si.getvalue().encode('utf-8-sig')  # برای نمایش درست فارسی در Excel
+    output = si.getvalue()
 
     return Response(
         output,
         mimetype='text/csv',
-        headers={'Content-Disposition': 'attachment; filename=responses.csv'}
+        headers={'Content-Disposition': 'attachment; filename=responses.csv; charset=utf-8'}
     )
+
+if __name__ == '__main__':
+    app.run(debug=True)
