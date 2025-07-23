@@ -17,23 +17,27 @@ with open(QUESTIONS_FILE, 'r', encoding='utf-8') as f:
 
 @app.route('/', methods=['GET', 'POST'])
 def survey():
-    if request.method == 'POST':
-        answers = request.form.to_dict()
+   if request.method == 'POST':
+    answers = request.form.to_dict()
 
-        # بارگذاري پاسخ‌هاي قبلي
-        if os.path.exists(RESPONSES_FILE):
-            with open(RESPONSES_FILE, 'r', encoding='utf-8') as f:
-                responses = json.load(f)
-        else:
-            responses = []
+    # افزودن اطلاعات اضافی
+    answers['id'] = str(uuid.uuid4())  # شناسه یکتا
+    answers['timestamp'] = datetime.now().isoformat()  # زمان ثبت
 
-        responses.append(answers)
+    # بارگذاری پاسخ‌های قبلی
+    if os.path.exists(RESPONSES_FILE):
+        with open(RESPONSES_FILE, 'r', encoding='utf-8') as f:
+            responses = json.load(f)
+    else:
+        responses = []
 
-        # ذخيره پاسخ جديد
-        with open(RESPONSES_FILE, 'w', encoding='utf-8') as f:
-            json.dump(responses, f, ensure_ascii=False, indent=2)
+    responses.append(answers)
 
-        return "پاسخ شما با موفقيت ثبت شد!"
+    # ذخیره پاسخ جدید
+    with open(RESPONSES_FILE, 'w', encoding='utf-8') as f:
+        json.dump(responses, f, ensure_ascii=False, indent=2)
+
+    return "پاسخ شما با موفقیت ثبت شد!"
 
     return render_template('survey.html', questions=questions)
 
