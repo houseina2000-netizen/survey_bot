@@ -43,7 +43,7 @@ def show_results():
     else:
         responses = []
 
-    return {"responses": responses}
+    return render_template('results.html', responses=responses)
 
 
 if __name__ == '__main__':
