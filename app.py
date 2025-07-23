@@ -17,28 +17,29 @@ with open(QUESTIONS_FILE, 'r', encoding='utf-8') as f:
 
 @app.route('/', methods=['GET', 'POST', 'HEAD'])
 def survey():
-   if request.method == 'POST':
-    answers = request.form.to_dict()
+    if request.method == 'POST':
+        answers = request.form.to_dict()
 
-    # افزودن اطلاعات اضافی
-    answers['id'] = str(uuid.uuid4())  # شناسه یکتا
-    answers['timestamp'] = datetime.now().isoformat()  # زمان ثبت
+        # افزودن اطلاعات اضافی
+        answers['id'] = str(uuid.uuid4())  # شناسه یکتا
+        answers['timestamp'] = datetime.now().isoformat()  # زمان ثبت
 
-    # بارگذاری پاسخ‌های قبلی
-    if os.path.exists(RESPONSES_FILE):
-        with open(RESPONSES_FILE, 'r', encoding='utf-8') as f:
-            responses = json.load(f)
-    else:
-        responses = []
+        # بارگذاری پاسخ‌های قبلی
+        if os.path.exists(RESPONSES_FILE):
+            with open(RESPONSES_FILE, 'r', encoding='utf-8') as f:
+                responses = json.load(f)
+        else:
+            responses = []
 
-    responses.append(answers)
+        responses.append(answers)
 
-    # ذخیره پاسخ جدید
-    with open(RESPONSES_FILE, 'w', encoding='utf-8') as f:
-        json.dump(responses, f, ensure_ascii=False, indent=2)
+        # ذخیره پاسخ جدید
+        with open(RESPONSES_FILE, 'w', encoding='utf-8') as f:
+            json.dump(responses, f, ensure_ascii=False, indent=2)
 
-    return "پاسخ شما با موفقیت ثبت شد!"
+        return "پاسخ شما با موفقیت ثبت شد!"
 
+    # وقتی روش درخواست GET یا HEAD باشد، فرم نمایش داده می‌شود
     return render_template('survey.html', questions=questions)
 
 @app.route('/results')
@@ -67,12 +68,12 @@ def download_csv():
     writer.writeheader()
     writer.writerows(responses)
 
-    output = si.getvalue()
+    output = si.getvalue().encode('utf-8-sig')  # برای درست نمایش دادن فارسی در Excel
 
     return Response(
         output,
         mimetype='text/csv',
-        headers={'Content-Disposition': 'attachment; filename=responses.csv; charset=utf-8'}
+        headers={'Content-Disposition': 'attachment; filename=responses.csv'}
     )
 
 if __name__ == '__main__':
