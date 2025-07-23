@@ -48,11 +48,31 @@ def show_results():
 
 if __name__ == '__main__':
     app.run(debug=True)
-from flask import send_file
+import csv
+from flask import send_file, Response
+from io import StringIO
 
 @app.route('/download')
-def download_results():
-    if os.path.exists(RESPONSES_FILE):
-        return send_file(RESPONSES_FILE, as_attachment=True)
-    else:
+def download_csv():
+    if not os.path.exists(RESPONSES_FILE):
         return "هیچ پاسخی برای دانلود موجود نیست."
+
+    with open(RESPONSES_FILE, 'r', encoding='utf-8') as f:
+        responses = json.load(f)
+
+    if not responses:
+        return "فایلی برای دانلود وجود ندارد."
+
+    # تبدیل JSON به CSV
+    si = StringIO()
+    writer = csv.DictWriter(si, fieldnames=responses[0].keys())
+    writer.writeheader()
+    writer.writerows(responses)
+
+    output = si.getvalue().encode('utf-8-sig')  # برای نمایش درست فارسی در Excel
+
+    return Response(
+        output,
+        mimetype='text/csv',
+        headers={'Content-Disposition': 'attachment; filename=responses.csv'}
+    )
