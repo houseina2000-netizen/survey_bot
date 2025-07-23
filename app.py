@@ -48,3 +48,11 @@ def show_results():
 
 if __name__ == '__main__':
     app.run(debug=True)
+from flask import send_file
+
+@app.route('/download')
+def download_results():
+    if os.path.exists(RESPONSES_FILE):
+        return send_file(RESPONSES_FILE, as_attachment=True)
+    else:
+        return "هیچ پاسخی برای دانلود موجود نیست."
