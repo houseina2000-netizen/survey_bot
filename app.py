@@ -15,7 +15,7 @@ RESPONSES_FILE = 'responses.json'
 with open(QUESTIONS_FILE, 'r', encoding='utf-8') as f:
     questions = json.load(f)
 
-@app.route('/', methods=['GET', 'POST'])
+@app.route('/', methods=['GET', 'POST', 'HEAD'])
 def survey():
    if request.method == 'POST':
     answers = request.form.to_dict()
