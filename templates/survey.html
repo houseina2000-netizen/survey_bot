@@ -1,16 +1,17 @@
 <!DOCTYPE html>
-<html lang="fa">
-<form><label for="name">نام و نام خانوادگی:</label>
-<input type="text" name="name" id="name" required>
-<br><br>
-</form>
+<html lang="fa" dir="rtl">
 <head>
-  <meta charset="UTF-8">
+  <meta charset="UTF-8" />
   <title>پرسش‌نامه بررسی دیدگاه تماشاگران تئاتر در اصفهان</title>
 </head>
-<body dir="rtl">
-  <h1>لطفاً به هر یک از سوالات با انتخاب یکی از گزینه ها پاسخ دهید. پاسخ شما در شناخت وضعیت تئاتر اصفهان و بهبود آن مؤثر خواهد بود</h1>
+<body>
+  <h1>لطفاً به هر یک از سوالات با انتخاب یکی از گزینه‌ها پاسخ دهید. پاسخ شما در شناخت وضعیت تئاتر اصفهان و بهبود آن مؤثر خواهد بود</h1>
+
   <form method="POST">
+    <label for="name">نام و نام خانوادگی:</label>
+    <input type="text" name="name" id="name" required>
+    <br><br>
+
     {% for q in questions %}
       <fieldset>
         <legend>{{ q.question }}</legend>
@@ -23,6 +24,7 @@
       </fieldset>
       <hr>
     {% endfor %}
+
     <button type="submit">ارسال</button>
   </form>
 </body>
