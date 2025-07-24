@@ -20,8 +20,8 @@ with open(QUESTIONS_FILE, 'r', encoding='utf-8') as f:
 
 # ارسال ایمیل
 def send_email(subject, body, to_email):
-    sender_email = "YOUR_EMAIL@gmail.com"  # ← آدرس ایمیل خودت
-    sender_password = "YOUR_APP_PASSWORD"  # ← رمز برنامه‌ای (App Password)
+    sender_email = "ho3einahj@gmail.com"  # ← آدرس ایمیل خودت
+    sender_password = "bkyqdmiiwmmqfxaa"  # ← رمز برنامه‌ای (App Password)
 
     msg = MIMEMultipart()
     msg['From'] = sender_email
