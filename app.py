@@ -7,6 +7,7 @@ import csv
 from io import StringIO
 import smtplib
 from email.mime.text import MIMEText
+import requests
 
 app = Flask(__name__)
 
@@ -83,13 +84,17 @@ def download_csv():
     )
 
 def send_email(answers):
-    sg = sendgrid.SendGridAPIClient(api_key=os.environ.get('SENDGRID_API_KEY'))
+    MAILGUN_DOMAIN = os.environ.get('MAILGUN_DOMAIN')
+    MAILGUN_API_KEY = os.environ.get('MAILGUN_API_KEY')
 
-    message = Mail(
-        from_email='ho3einahj@gmail.com',
-        to_emails='ho3einahj@gmail.com',
-        subject='پاسخ جدید به نظرسنجی',
-        plain_text_content=f"""
+    return requests.post(
+        f"https://api.mailgun.net/v3/{MAILGUN_DOMAIN}/messages",
+        auth=("api", MAILGUN_API_KEY),
+        data={
+            "from": f"Survey Bot <mailgun@{MAILGUN_DOMAIN}>",
+            "to": ["ho3einahj@gmail.com"],
+            "subject": "پاسخ جدید به نظرسنجی",
+            "text": f"""
 📝 پاسخ جدید دریافت شد:
 
 نام: {answers.get('first_name', '')}
@@ -99,7 +104,8 @@ def send_email(answers):
 سن: {answers.get('age', '')}
 زمان ثبت: {answers.get('timestamp', '')}
 شناسه: {answers.get('id', '')}
-        """
+            """
+        }
     )
 
     try:
