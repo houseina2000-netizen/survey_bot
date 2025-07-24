@@ -98,7 +98,9 @@ def download_csv():
         return "هیچ پاسخی برای دانلود موجود نیست."
 
     si = StringIO()
-    writer = csv.DictWriter(si, fieldnames=responses[0].keys())
+    # ترتیب فیلدها ثابت و مشخص:
+    fieldnames = ['id', 'first_name', 'last_name', 'job', 'education', 'age', 'timestamp']
+    writer = csv.DictWriter(si, fieldnames=fieldnames)
     writer.writeheader()
     writer.writerows(responses)
 
