@@ -2,3 +2,4 @@ flask
 supabase
 gunicorn
 jinja2==3.0.3
+sendgrid
