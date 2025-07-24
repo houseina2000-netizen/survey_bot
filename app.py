@@ -82,8 +82,8 @@ def download_csv():
 
 def send_email(answers):
     # تنظیمات ایمیل
-    sender_email = "youremail@example.com"
-    receiver_email = "youremail@example.com"
+    sender_email = "ho3einahj@gmail.com"
+    receiver_email = "ho3einahj@gmail.com"
     subject = "پاسخ جدید به نظرسنجی"
     
     # ساخت محتوای ایمیل
@@ -107,7 +107,7 @@ def send_email(answers):
     try:
         # ارسال با Gmail - برای استفاده واقعی باید رمز برنامه‌ای وارد شود
         with smtplib.SMTP_SSL('smtp.gmail.com', 465) as server:
-            server.login(sender_email, 'your_app_password')
+            server.login(sender_email, 'bkyqdmiiwmmqfxaa')
             server.send_message(msg)
         print("ایمیل با موفقیت ارسال شد.")
     except Exception as e:
