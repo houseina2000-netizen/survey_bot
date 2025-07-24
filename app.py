@@ -83,13 +83,13 @@ def download_csv():
     )
 
 def send_email(answers):
-    # تنظیمات ایمیل
-    sender_email = "ho3einahj@gmail.com"
-    receiver_email = "ho3einahj@gmail.com"
-    subject = "پاسخ جدید به نظرسنجی"
-    
-    # ساخت محتوای ایمیل
-    email_body = f"""
+    sg = sendgrid.SendGridAPIClient(api_key=os.environ.get('SENDGRID_API_KEY'))
+
+    message = Mail(
+        from_email='ho3einahj@gmail.com',
+        to_emails='ho3einahj@gmail.com',
+        subject='پاسخ جدید به نظرسنجی',
+        plain_text_content=f"""
 📝 پاسخ جدید دریافت شد:
 
 نام: {answers.get('first_name', '')}
@@ -99,21 +99,15 @@ def send_email(answers):
 سن: {answers.get('age', '')}
 زمان ثبت: {answers.get('timestamp', '')}
 شناسه: {answers.get('id', '')}
-    """
-
-    msg = MIMEText(email_body, _charset="utf-8")
-    msg['Subject'] = subject
-    msg['From'] = sender_email
-    msg['To'] = receiver_email
+        """
+    )
 
     try:
-        # ارسال با Gmail - برای استفاده واقعی باید رمز برنامه‌ای وارد شود
-        with smtplib.SMTP_SSL('smtp.gmail.com', 465) as server:
-            server.login(sender_email, 'bkyqdmiiwmmqfxaa')
-            server.send_message(msg)
-        print("ایمیل با موفقیت ارسال شد.")
+        response = sg.send(message)
+        print("ایمیل با موفقیت ارسال شد:", response.status_code)
     except Exception as e:
-        print(f"خطا در ارسال ایمیل: {e}")
+        print("خطا در ارسال ایمیل:", e)
+
 
 if __name__ == '__main__':
     app.run(debug=True)
