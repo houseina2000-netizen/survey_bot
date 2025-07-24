@@ -3,3 +3,4 @@ supabase
 gunicorn
 jinja2==3.0.3
 requests
+psycopg2
